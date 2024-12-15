@@ -1,62 +1,98 @@
-let selectedPiece = null; // Currently selected piece (square)
-let previousColor = "";   // Store background color to restore later
+let selectedPiece = null;
+let previousColor = "";
 
-document.querySelectorAll('.column').forEach(square => {
+document.querySelectorAll('.column').forEach((square, index) => {
+    // Assign square position (row, col) based on index
+    square.dataset.row = Math.floor(index / 8);
+    square.dataset.col = index % 8;
     square.addEventListener('click', handleSquareClick);
 });
 
 function handleSquareClick(event) {
     const square = event.target;
 
-    // If selecting a piece for the first time
     if (!selectedPiece && square.hasAttribute('data-piece')) {
         selectPiece(square);
-        return;
-    }
-
-    // If clicking the same square, deselect the piece
-    if (selectedPiece === square) {
-        deselectPiece();
-        return;
-    }
-
-    // Move the piece to a new square
-    if (selectedPiece) {
+    } else if (selectedPiece) {
         movePiece(selectedPiece, square);
-        deselectPiece();
     }
 }
 
-// Select and highlight the piece
 function selectPiece(square) {
     selectedPiece = square;
-    previousColor = square.style.backgroundColor; // Save original background color
-    square.style.backgroundColor = "#aaf7aa";     // Highlight the selected square
+    previousColor = square.style.backgroundColor;
+    square.style.backgroundColor = "#aaf7aa";
 }
 
-// Move the piece to the target square
 function movePiece(fromSquare, toSquare) {
-    // If the target square has no piece
-    if (!toSquare.hasAttribute('data-piece')) {
-        const piece = fromSquare.textContent;
-        const pieceType = fromSquare.getAttribute('data-piece');
+    const pieceType = fromSquare.getAttribute('data-piece');
+    const fromRow = parseInt(fromSquare.dataset.row);
+    const fromCol = parseInt(fromSquare.dataset.col);
+    const toRow = parseInt(toSquare.dataset.row);
+    const toCol = parseInt(toSquare.dataset.col);
 
-        // Update the target square
-        toSquare.textContent = piece;
+    if (isValidMove(pieceType, fromRow, fromCol, toRow, toCol, toSquare)) {
+        // Move the piece
+        toSquare.textContent = fromSquare.textContent;
         toSquare.setAttribute('data-piece', pieceType);
-
-        // Clear the original square
         fromSquare.textContent = "";
         fromSquare.removeAttribute('data-piece');
     } else {
-        alert("You cannot move to a square that already has a piece!");
+        alert("Invalid move!");
+    }
+    deselectPiece();
+}
+
+function deselectPiece() {
+    if (selectedPiece) {
+        selectedPiece.style.backgroundColor = previousColor;
+        selectedPiece = null;
     }
 }
 
-// Deselect the current piece
-function deselectPiece() {
-    if (selectedPiece) {
-        selectedPiece.style.backgroundColor = previousColor; // Restore the background
-        selectedPiece = null; // Clear selection
+function isValidMove(pieceType, fromRow, fromCol, toRow, toCol, toSquare) {
+    const rowDiff = Math.abs(toRow - fromRow);
+    const colDiff = Math.abs(toCol - fromCol);
+
+    // Prevent capturing own pieces
+    if (toSquare.hasAttribute('data-piece') && 
+        toSquare.getAttribute('data-piece').includes(pieceType.split('-')[1])) {
+        return false;
     }
+
+    switch (pieceType) {
+        case 'pawn-white':
+            return isValidPawnMove(fromRow, toRow, colDiff, 1, toSquare);
+        case 'pawn-black':
+            return isValidPawnMove(fromRow, toRow, colDiff, -1, toSquare);
+        case 'rook-white':
+        case 'rook-black':
+            return rowDiff === 0 || colDiff === 0;
+        case 'knight-white':
+        case 'knight-black':
+            return (rowDiff === 2 && colDiff === 1) || (rowDiff === 1 && colDiff === 2);
+        case 'bishop-white':
+        case 'bishop-black':
+            return rowDiff === colDiff;
+        case 'queen-white':
+        case 'queen-black':
+            return rowDiff === colDiff || rowDiff === 0 || colDiff === 0;
+        case 'king-white':
+        case 'king-black':
+            return rowDiff <= 1 && colDiff <= 1;
+        default:
+            return false;
+    }
+}
+
+function isValidPawnMove(fromRow, toRow, colDiff, direction, toSquare) {
+    // Normal move: one square forward
+    if (colDiff === 0 && !toSquare.hasAttribute('data-piece')) {
+        return toRow - fromRow === direction;
+    }
+    // Capture move: one square diagonally forward
+    if (colDiff === 1 && toSquare.hasAttribute('data-piece')) {
+        return toRow - fromRow === direction;
+    }
+    return false;
 }
