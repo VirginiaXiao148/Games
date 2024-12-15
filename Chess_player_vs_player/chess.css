@@ -1,0 +1,40 @@
+/* Reset styles */
+body {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f0f0;
+}
+
+/* Chessboard */
+.board {
+    display: flex;
+    flex-direction: column;
+    border: 2px solid #000;
+    width: 400px;
+    height: 400px;
+}
+
+/* Rows */
+.row {
+    display: flex;
+    flex: 1;
+}
+
+/* Columns (Squares) */
+.column {
+    flex: 1;
+    display: flex;
+    justify-content: center; /* Center the pieces horizontally */
+    align-items: center; /* Center the pieces vertically */
+    font-size: 2em; /* Size of the pieces */
+    font-family: Arial, sans-serif;
+    background-color: #f0d9b5; /* Light square */
+}
+
+.row:nth-child(even) .column:nth-child(odd),
+.row:nth-child(odd) .column:nth-child(even) {
+    background-color: #b58863; /* Dark square */
+}
