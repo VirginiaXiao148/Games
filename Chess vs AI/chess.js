@@ -54,66 +54,6 @@ function movePiece(fromSquare, toSquare) {
     deselectPiece();
 }
 
-function undoMove(fromSquare, toSquare, previousPiece) {
-    fromSquare.textContent = toSquare.textContent;
-    fromSquare.setAttribute('data-piece', toSquare.getAttribute('data-piece'));
-    toSquare.textContent = previousPiece ? getPieceSymbol(previousPiece) : "";
-    if (previousPiece) {
-        toSquare.setAttribute('data-piece', previousPiece);
-    } else {
-        toSquare.removeAttribute('data-piece');
-    }
-}
-
-function isKingInCheck(player) {
-    const kingSquare = findKing(player);
-    const opponentPieces = document.querySelectorAll(`[data-piece*="${opponent(player)}"]`);
-
-    for (const piece of opponentPieces) {
-        if (isValidMove(piece.getAttribute('data-piece'), parseInt(piece.dataset.row), parseInt(piece.dataset.col),
-            parseInt(kingSquare.dataset.row), parseInt(kingSquare.dataset.col), kingSquare, false)) {
-            return true;
-        }
-    }
-    return false;
-}
-
-function isCheckmate(player) {
-    const playerPieces = document.querySelectorAll(`[data-piece*="${player}"]`);
-
-    for (const piece of playerPieces) {
-        const fromRow = parseInt(piece.dataset.row);
-        const fromCol = parseInt(piece.dataset.col);
-        const pieceType = piece.getAttribute('data-piece');
-
-        for (let toRow = 0; toRow < 8; toRow++) {
-            for (let toCol = 0; toCol < 8; toCol++) {
-                const toSquare = document.querySelector(`[data-row="${toRow}"][data-col="${toCol}"]`);
-                if (isValidMove(pieceType, fromRow, fromCol, toRow, toCol, toSquare, false)) {
-                    const tempPiece = toSquare.getAttribute('data-piece');
-                    makeMove(piece, toSquare);
-
-                    const stillInCheck = isKingInCheck(player);
-                    undoMove(piece, toSquare, tempPiece);
-
-                    if (!stillInCheck) return false; // Found a valid move
-                }
-            }
-        }
-    }
-    return true; // No valid moves found
-}
-
-function findKing(player) {
-    return [...document.querySelectorAll('.column')].find(square =>
-        square.getAttribute('data-piece') === `king-${player}`
-    );
-}
-
-function opponent() {
-    return currentPlayer === "white" ? "black" : "white";
-}
-
 function deselectPiece() {
     if (selectedPiece) {
         selectedPiece.style.backgroundColor = previousColor; // Remove highlight
