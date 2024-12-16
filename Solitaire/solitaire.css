@@ -1,0 +1,81 @@
+/* Game Container */
+.game-container {
+    max-width: 1000px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #076324;
+    border-radius: 8px;
+}
+
+/* Top Row - Deck and Foundation */
+.top-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+}
+
+/* Deck Area */
+.deck-area {
+    display: flex;
+    gap: 20px;
+}
+
+.deck, .waste-pile {
+    width: 100px;
+    height: 140px;
+    border: 2px solid #fff;
+    border-radius: 8px;
+    background-color: #044d1c;
+}
+
+/* Foundation Area */
+.foundation-area {
+    display: flex;
+    gap: 20px;
+}
+
+.foundation {
+    width: 100px;
+    height: 140px;
+    border: 2px dashed #fff;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Tableau Area */
+.tableau-area {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.tableau {
+    width: 100px;
+    min-height: 140px;
+    border: 2px dashed #fff;
+    border-radius: 8px;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Card Placeholder Styling */
+.card {
+    width: 100px;
+    height: 140px;
+    background-color: #fff;
+    border-radius: 8px;
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    margin-bottom: -120px; /* For stacking cards */
+}
+
+/* General Styles */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 20px;
+    background-color: #044d1c;
+    font-family: Arial, sans-serif;
+}
